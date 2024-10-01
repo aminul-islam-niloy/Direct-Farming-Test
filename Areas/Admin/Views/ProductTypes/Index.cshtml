@@ -1,0 +1,66 @@
+﻿@using OnlineShop.Models
+@model IEnumerable<ProductTypes>
+
+
+<div class="container">
+    <button class="btn btn-secondary ProductCategory-back-btn" onclick="window.history.back();">
+        <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+
+<div class="row ProductCategory-row mb-4">
+    <div class="col-6">
+        <h4 class="ProductCategory-heading text-info">Product Category List</h4>
+    </div>
+    <div class="col-6 text-right justify-content-end">
+        <a asp-action="Create" class="btn btn-info ProductCategory-new-btn">
+            <i class="fa-solid fa-plus"></i> New Product Type
+        </a>
+    </div>
+</div>
+
+    <div class="ProductCategory-table-wrapper" >
+    <table class="table table-striped border ProductCategory-table" >
+        <thead>
+            <tr class="table-info ProductCategory-table-header">
+                <th>@Html.DisplayNameFor(c => c.ProductType)</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductType</td>
+                    <td></td>
+                    <td>
+                        <partial name="_ButtonView" model="@item.Id" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+</div>
+
+@section scripts {
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var save = '@TempData["save"]'
+            if (save != '') {
+                alertify.success(save);
+            }
+            var edit = '@TempData["edit"]'
+            if (edit != '') {
+                alertify.success(edit);
+            }
+            var del = '@TempData["delete"]'
+            if (del != '') {
+                alertify.error(del);
+            }
+        })
+    </script>
+}

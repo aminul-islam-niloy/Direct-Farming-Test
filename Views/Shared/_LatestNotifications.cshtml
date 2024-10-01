@@ -1,0 +1,68 @@
+﻿@using System.Net.Http
+@using OnlineShop.Session
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@using System.Globalization
+
+@model IEnumerable<OrganicOption.Models.Notifications.Notification>
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+
+@inject OrganicOption.Service.NotificationService notificationService
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string userId = UserManager.GetUserId(User);
+    var unreadCount = 0;
+    if (userId != null)
+    {
+        unreadCount = notificationService.GetUnreadNotifications(userId).Count();
+    }
+}
+
+@foreach (var notification in Model)
+{
+    string roleLink = "";
+
+    if (User.IsInRole("Customer"))
+    {
+        roleLink = Url.Action("Index", "Deshboard", new { area = "User" });
+    }
+    else if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    {
+        roleLink = Url.Action("AllOrders", "Order", new { area = "Customer" }); 
+    }
+    else if (User.IsInRole("Farmer"))
+    {
+        roleLink = Url.Action("AllOrdersGroupedByDate", "Inventory", new { area = "Farmer" });
+       
+    }
+    else if (User.IsInRole("Rider"))
+    {
+        roleLink = Url.Action("RiderOrders", "Order", new { area = "Rider" }); 
+    }
+
+    if (!string.IsNullOrEmpty(roleLink))
+    {
+        <a class="dropdown-item d-flex align-items-center" href="@roleLink"
+           style="display: flex; align-items:start; text-decoration: none;">
+
+            <div class="notification-container" style="display: flex; flex-direction: row; align-items: center; margin-bottom: 5px; padding: 5px;  border-radius: 5px;">
+                <!-- Circle with icon -->
+                <div style="flex-shrink: 0; width: 30px; height: 30px;  color: white; background:green; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 10px;">
+                    <i class="fas fa-bell"></i>
+                </div>
+
+                <!-- Notification text -->
+                <div style="flex: 1;  border-radius: 5px;">
+                    <div class="small text-gray-400" style="font-size: 0.8rem; ">@notification.DateCreated.ToString("MMMM dd, yyyy")</div>
+                    <span class="font-weight-bold" style="font-size: 0.8rem; word-wrap: break-word;">@notification.Message</span>
+                </div>
+            </div>
+        </a>
+    }
+}

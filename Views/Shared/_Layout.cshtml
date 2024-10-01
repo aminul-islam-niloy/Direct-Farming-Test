@@ -1,0 +1,793 @@
+﻿@using System.Net.Http
+@using OnlineShop.Session
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@using System.Globalization
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("roleName");
+    int count = 0;
+    List<Products> products = HttpContextAccessor.HttpContext.Session.Get<List<Products>>("products");
+    if (products == null)
+    {
+        products = new List<Products>();
+    }
+    count = products.Count();
+}
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string userId = UserManager.GetUserId(User);
+}
+
+@inject OrganicOption.Service.NotificationService notificationService
+@{
+    var unreadCount = 0;
+    if (userId != null)
+    {
+        unreadCount = notificationService.GetUnreadNotifications(userId).Count();
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] Organic Option</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/css/cssplugins.css">
+    <link rel="stylesheet" href="/css/cssstyle.css">
+
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+    <script src="https://kit.fontawesome.com/238e4a8eca.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+</head>
+<body>
+
+    <header class="header_area">
+
+        <div class="header_bottom sticky-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="main_menu header_position">
+                            <nav>
+                                <ul>
+                                    <li>
+                                        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                                            <img src="/assets/img/logo/online-shoping.png" style="height: 40px; width: auto;" alt="Logo">
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a asp-area="" asp-controller="Home" asp-action="Index"><i class="zmdi zmdi-home"></i> home </a>
+
+                                    </li>
+
+                                    @if (userRole == "SuperAdmin")
+                                    {
+                                        <li class="mega_items ">
+                                            <a asp-area="Admin" asp-controller="Role" asp-action="Index"><i class="zmdi zmdi-shopping-basket"></i>Manage Roles <i class="zmdi zmdi-account"></i></a>
+                                            <div class="mega_menu">
+                                                <ul class="mega_menu_inner">
+                                                    <li>
+                                                        <a asp-area="Customer" asp-controller="Home" asp-action="Products">Product</a>
+                                                        <ul>
+                                                            <li><a href="#">Full Width</a></li>
+                                                            <li><a href="shop-fullwidth-list.html">Full Width list</a></li>
+                                                            <li><a href="shop-right-sidebar.html">Right Sidebar </a></li>
+                                                            <li><a href="shop-right-sidebar-list.html"> Right Sidebar list</a></li>
+                                                            <li><a href="shop-list.html">List View</a></li>
+                                                        </ul>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    }
+                                    @if (userRole == "Admin")
+                                    {
+                                        <li class="mega_items ">
+                                            <a a asp-area="Admin" asp-controller="Products" asp-action="Index"><i class="zmdi zmdi-shopping-basket"></i>Manage Products <i class="zmdi zmdi-caret-down"></i></a>
+                                            <div class="mega_menu">
+                                                <ul class="mega_menu_inner">
+                                                    <li>
+                                                        <a asp-area="Customer" asp-controller="Home" asp-action="Products">Product</a>
+                                                        <ul>
+                                                            <li><a href="shop-fullwidth.html">Full Width</a></li>
+                                                            <li><a href="shop-fullwidth-list.html">Full Width list</a></li>
+                                                            <li><a href="shop-right-sidebar.html">Right Sidebar </a></li>
+                                                            <li><a href="shop-right-sidebar-list.html"> Right Sidebar list</a></li>
+                                                            <li><a href="shop-list.html">List View</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-area="Farmer" asp-controller="FarmerShop" asp-action="AllShop">All Shop</a>
+                                                        <ul>
+
+                                                            <li><a href="my-account.html">my account</a></li>
+                                                            <li><a href="404.html">Error 404</a></li>
+                                                        </ul>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    }
+                                    @if (userRole == "Farmer")
+                                    {
+                                        <li class="mega_items ">
+                                            <a asp-area="Farmer" asp-controller="FarmerShop" asp-action="Index"><i class="zmdi zmdi-shopping-basket"></i>Manage shop <i class="zmdi zmdi-caret-down"></i></a>
+                                            <div class="mega_menu">
+                                                <ul class="mega_menu_inner">
+                                                    <li>
+                                                        <a asp-area="Customer" asp-controller="Home" asp-action="Products">Product</a>
+                                                        <ul>
+                                                            <li><a href="shop-fullwidth.html">Full Width</a></li>
+                                                            <li><a href="shop-fullwidth-list.html">Full Width list</a></li>
+                                                            <li><a href="shop-right-sidebar.html">Right Sidebar </a></li>
+                                                            <li><a href="shop-right-sidebar-list.html"> Right Sidebar list</a></li>
+                                                            <li><a href="shop-list.html">List View</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-area="Farmer" asp-controller="FarmerShop" asp-action="AllShop">All Shop</a>
+                                                        <ul>
+                                                            <li><a href="cart.html">cart</a></li>
+                                                            <li><a href="404.html">Error 404</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">other Pages</a>
+                                                        <ul>
+
+                                                            <li><a href="my-account.html">my account</a></li>
+                                                            <li><a href="404.html">Error 404</a></li>
+                                                        </ul>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    }
+                                    @if (userRole == "Rider")
+                                    {
+                                        <li class="mega_items ">
+                                            <a asp-area="Rider" asp-controller="RiderDelivery" asp-action="Index"><i class="zmdi zmdi-bike"></i>Manage Ride <i class="zmdi zmdi-caret-down"></i></a>
+                                            <div class="mega_menu">
+                                                <ul class="mega_menu_inner">
+                                                    <li>
+                                                        <a asp-area="Customer" asp-controller="Home" asp-action="Products">Product</a>
+                                                        <ul>
+                                                            <li><a href="shop-fullwidth.html">Full Width</a></li>
+                                                            <li><a href="shop-fullwidth-list.html">Full Width list</a></li>
+                                                            <li><a href="shop-right-sidebar.html">Right Sidebar </a></li>
+                                                            <li><a href="shop-right-sidebar-list.html"> Right Sidebar list</a></li>
+                                                            <li><a href="shop-list.html">List View</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-area="Farmer" asp-controller="FarmerShop" asp-action="AllShop">All Shop</a>
+                                                        <ul>
+                                                            <li><a href="my-account.html">my account</a></li>
+                                                            <li><a href="404.html">Error 404</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">other Pages</a>
+                                                        <ul>
+                                                            <li><a href="my-account.html">my account</a></li>
+                                                            <li><a href="404.html">Error 404</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    }
+
+                                    @if (userRole == "Customer")
+                                    {
+                                        <li class="mega_items ">
+                                            <a asp-area="Farmer" asp-controller="FarmerShop" asp-action="AllShop"><i class="zmdi zmdi-shopping-basket"></i> shop <i class="zmdi zmdi-caret-down"></i></a>
+                                            <div class="mega_menu">
+                                                <ul class="mega_menu_inner">
+                                                    <li>
+                                                        <a asp-area="Customer" asp-controller="Home" asp-action="Products">Product</a>
+                                                        <ul>
+                                                            <li><a href="shop-fullwidth.html">Full Width</a></li>
+                                                            <li><a href="shop-fullwidth-list.html">Full Width list</a></li>
+                                                            <li><a href="shop-right-sidebar.html">Right Sidebar </a></li>
+                                                            <li><a href="shop-right-sidebar-list.html"> Right Sidebar list</a></li>
+                                                            <li><a href="shop-list.html">List View</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">other Pages</a>
+                                                        <ul>
+                                                            <li><a href="cart.html">cart</a></li>
+                                                            <li><a href="wishlist.html">Wishlist</a></li>
+                                                            <li><a href="checkout.html">Checkout</a></li>
+                                                            <li><a href="my-account.html">my account</a></li>
+                                                            <li><a href="404.html">Error 404</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Product Types</a>
+                                                        <ul>
+                                                            <li><a href="product-details.html">product details</a></li>
+                                                            <li><a href="product-sidebar.html">product sidebar</a></li>
+                                                            <li><a href="product-grouped.html">product grouped</a></li>
+                                                            <li><a href="variable-product.html">product variable</a></li>
+
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a href="blog.html"><i class="zmdi zmdi-collection-music"></i> blog <i class="zmdi zmdi-caret-down"></i></a>
+                                        <ul class="sub_menu pages">
+                                            <li><a asp-action="Index" asp-controller="Blog" asp-area="Customer">blog details</a></li>
+                                            <li><a href="/Admin/ProductPrice/TodayPrice">ProductPrice</a></li>
+                                            <li><a href="blog-sidebar.html">blog sidebar</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <li>
+                                        <div class="wrapper ">
+                                            <form method="post" action="@Url.Action("Products", "Home")">
+
+                                                <div class="searchBar">
+                                                    <input id="searchQueryInput" type="text" name="searchString" placeholder="Search product..." />
+                                                    <button id="searchQuerySubmit" type="submit" name="searchQuerySubmit">
+                                                        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                                            <path fill="#666666" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    @if (userRole != "Customer" && userRole != "Rider" && userRole != "Admin" && userRole != "Farmer" && userRole != "SuperAdmin")
+                                    {
+                                        <li class="nav-item" style="margin-left:115px; position: relative;">
+
+                                        </li>
+                                    }
+
+                                    <li class="nav-item" style="margin-left: 25px; position: relative;">
+                                        <a class="nav-link" href="#" onclick="loadNotifications()" id="notificationToggle">
+                                            <i class="fa-regular fa-bell" style="font-size: 16px; position: relative;"></i>
+                                            @if (unreadCount > 0)
+                                            {
+                                                <span class="badge" style="background: red; color: white; position: absolute; top: 12px; left: 25px; font-size: 10px; padding: 2px 4px; border-radius: 50%;" id="notification-count">@unreadCount</span>
+                                            }
+                                        </a>
+                                        <div class="dropdown-menu shadow animated--grow-in mt-1" aria-labelledby="alertsDropdown"
+                                             style="width: 450px; max-height: 500px; overflow-y: auto; padding: 0; border-radius: 0.4rem; left: -120px;  ">
+                                            <h6 class="dropdown-header"
+                                                style="font-size: 1.0rem; font-size:18px; font-weight: bold; color: #343a40; background-color: #f8f9fa; padding: 0.5rem 1rem; border-bottom: 1px solid #dee2e6;">
+                                                Notification Center
+                                            </h6>
+                                            <div id="notificationsContainer" style="padding:5px; background:white">
+                                            </div>
+                                            <a class="dropdown-item text-center small"
+                                               href="@Url.Action("Index", "Notifications", new { area = "Customer" })"
+                                               style="color: #dc3545; padding: 0.75rem 1.25rem; text-align: center; transition: background-color 0.3s ease; display: block;">
+                                                Show All Alerts
+                                            </a>
+                                        </div>
+                                    </li>
+
+                                    @if (userRole == "Customer")
+                                    {
+                                        <li class="nav-item">
+                                            <a asp-area="Customer" asp-controller="Home" asp-action="Cart">
+                                                <i class="fas fa-shopping-cart" style="font-size: 18px; position: relative;"></i>  @if (count > 0)
+                                                {
+                                                    <span class="badge" style="  background: red; color: white; position: absolute; top: 12px; left: 30px; font-size: 12px; padding: 2px 5px; border-radius: 50%;" id="cart-count">@count</span>
+                                                }
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @if (SignInManager.IsSignedIn(User))
+                                    {
+                                        <li>
+                                            <a asp-action="" asp-area="User" asp-controller="Deshboard" title="Manage">
+                                                <i class="zmdi zmdi-account"></i> Deshboard <i class="zmdi zmdi-caret-down"></i>
+                                            </a>
+
+                                            <ul class="sub_menu pages">
+                                                <li>
+                                                    <h4 class="text-center"> @UserManager.GetUserName(User)</h4>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li><a class="dropdown-item" href="/User/Deshboard/MyAccount/@userId" title="Manage"> <i class="fa-solid fa-user" style="margin-right:7px"></i>My  Profile</a></li>
+
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="User" asp-controller="Deshboard" asp-action="Edit" asp-route-id="@userId">
+                                                        <i class="fa-solid fa-gear" style="margin-right:5px"></i> Setting
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" asp-action="" asp-area="User" asp-controller="Deshboard">
+                                                        <i class="fa-solid fa-gauge" style="margin-right:7px"></i> My Deshboard
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
+                                                        <button class="dropdown-item" type="submit" style="background: none; border: none; width: 100%; font-size:16px; padding: 0.75rem 1.0rem; color: #dc3545;">
+                                                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" style="margin-right:7px"></i>Logout
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li><a asp-area="Identity" asp-page="/Account/Register">Register</a></li>
+                                        <li><a asp-area="Identity" asp-page="/Account/Login">Login</a></li>
+                                    }
+                                </ul>
+
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!--Offcanvas menu area start-->
+    <div class="off_canvars_overlay"></div>
+    <div class="Offcanvas_menu mt-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="canvas_open">
+                        <span>MENU</span>
+                        <a href="javascript:void(0)"><i class="ion-navicon"></i></a>
+                    </div>
+                    <div class="Offcanvas_menu_wrapper">
+                        <div class="canvas_close">
+                            <a href="javascript:void(0)">
+                                <i class="ion-android-close"></i>
+                            </a>
+                        </div>
+                        <div class="welcome_text">
+                            <p>Welcome to <span> Organic Option</span></p>
+                        </div>
+                        <div class="top_right">
+                            <ul>
+                                <li>
+                                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                                        <img src="/assets/img/logo/online-shoping.png" style="height: 40px; width: auto;" alt="Logo">
+                                    </a>
+                                </li>
+
+
+                                @if (userId != null)
+                                {
+                                    <li class="top_links">
+
+                                        <ul class="dropdown_links">
+
+
+                                            <li><a href="/User/Deshboard/MyAccount/@userId" title="Manage"> <i class="fa-solid fa-user" style="margin-right:7px"></i>My  Profile</a></li>
+
+
+                                            <li>
+                                                <a asp-area="User" asp-controller="Deshboard" asp-action="Edit" asp-route-id="@userId">
+                                                    <i class="fa-solid fa-gear" style="margin-right:5px"></i> Setting
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="" asp-area="User" asp-controller="Deshboard">
+                                                    <i class="fa-solid fa-gauge" style="margin-right:7px"></i> My Deshboard
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
+                                                    <button type="submit" style="background: none; border: none; width: 100%; font-size:16px; padding: 0.75rem 1.0rem; color: #dc3545;">
+                                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" style="margin-right:7px"></i>Logout
+                                                    </button>
+                                                </form>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <div class="btn-group d-flex">
+                                            <a style="font-size:18px; font-weight:500" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                                            <a style="margin-left:7px; font-size:18px; font-weight:500" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="search-container">
+
+                            <form method="post" action="@Url.Action("Products", "Home")">
+
+                                <div class="search_box">
+                                    <input placeholder="Search product..." type="text" name="searchString">
+                                    <button type="submit"><i class="zmdi zmdi-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="menu" class="text-left">
+                            <ul class="offcanvas_main_menu">
+                                <li class="menu-item-has-children">
+                                    @if (userId != null)
+                                    {
+                                        <a class="dropdown-item" href="/User/Deshboard/MyAccount/@userId" title="Manage"> <i class="fa-solid fa-user" style="margin-right:7px"></i>My  Profile</a>
+
+                                        <a class="dropdown-item" asp-area="User" asp-controller="Deshboard" asp-action="Edit" asp-route-id="@userId">
+                                            <i class="fa-solid fa-gear" style="margin-right:5px"></i> Setting
+                                        </a>
+
+                                        <a class="dropdown-item" asp-action="" asp-area="User" asp-controller="Deshboard">
+                                            <i class="fa-solid fa-gauge" style="margin-right:7px"></i> My Deshboard
+                                        </a>
+
+                                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
+                                            <button class="dropdown-item" type="submit" style="background: none; border: none; width: 100%; font-size:16px; padding: 0.75rem 1.0rem; color: #dc3545;">
+                                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" style="margin-right:7px"></i>Logout
+                                            </button>
+                                        </form>
+                                    }
+                                </li>
+
+                                <li class="menu-item-has-children">
+                                    <a asp-area="" asp-controller="Home" asp-action="Products">Products</a>
+                                    <ul class="sub-menu">
+
+
+                                        <li class="menu-item-has-children">
+                                            <a href="#">Product Types</a>
+                                            <ul class="sub-menu">
+                                                <li>
+                                                    <a href="product-details.html">product details</a>
+                                                </li>
+                                                <li>
+                                                    <a href="product-sidebar.html">product sidebar</a>
+                                                </li>
+                                                <li>
+                                                    <a href="product-grouped.html">product grouped</a>
+                                                </li>
+                                                <li>
+                                                    <a href="variable-product.html">product variable</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="menu-item-has-children">
+                                    <a asp-action="AllShop" asp-area="Farmer" asp-controller="FarmerShop"> Shop </a>
+
+                                    <ul class="sub-menu">
+                                        <li><a href="blog.html">blog</a></li>
+                                        <li><a href="blog-details.html">blog details</a></li>
+                                        <li><a href="blog-fullwidth.html">blog fullwidth</a></li>
+                                        <li><a href="blog-sidebar.html">blog sidebar</a></li>
+                                    </ul>
+                                </li>
+                                <li class="menu-item-has-children">
+                                    <a href="#">pages </a>
+                                    <ul class="sub-menu">
+                                        <li><a href="about.html">About Us</a></li>
+                                        <li><a href="services.html">services</a></li>
+                                        <li><a href="portfolio.html">portfolio</a></li>
+                                        <li><a href="faq.html">Frequently Questions</a></li>
+                                        <li><a href="contact.html">contact</a></li>
+
+                                        <li><a href="wishlist.html">Wishlist</a></li>
+                                        <li><a href="404.html">Error 404</a></li>
+                                    </ul>
+                                </li>
+
+                                <li class="menu-item-has-children">
+                                    <a href="about.html">about Us</a>
+                                </li>
+                                <li class="menu-item-has-children">
+                                    <a href="contact.html"> Contact Us</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Offcanvas menu area end-->
+
+    <partial name="_CookieConsentPartial" />
+
+    <div>
+        @RenderBody()
+        <hr />
+
+    </div>
+
+    <!--footer area start-->
+    <footer class="footer_widgets">
+        <div class="container">
+            <div class="footer_top">
+                <div class="row">
+                    <div class="col-lg-4 col-md-5">
+                        <div class="widgets_container contact_us">
+                            <a href="index.html"><img src="/img/logo/online-shoping.png" alt="Logo" class="img-fluid mb-4"></a>
+                            <div class="footer_contact">
+                                <ul class="list-unstyled">
+                                    <li><i class="zmdi zmdi-home"></i><span class="fw-bold"> Address:</span> Khlishpur, Khulna</li>
+                                    <li><i class="zmdi zmdi-phone-setting"></i><span class="fw-bold"> Phone:</span> <a href="tel:01568105212" style="text-decoration: none; color: inherit;">01568105212</a></li>
+                                    <li><i class="zmdi zmdi-email"></i><span class="fw-bold"> Email:</span> <a href="mailto:info@OrganicOption.com" style="text-decoration: none; color: inherit;">info@OrganicOption.com</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="social-links mt-4 d-flex flex-wrap justify-content-center">
+                                <a href="https://github.com/aminul-islam-niloy" title="Github" class="text-center" style="text-decoration: none; color: black; width: 60px;">
+                                    <i class="fa-brands fa-github" style="font-size: 20px;"></i>
+                                    <p class="mt-1 mb-0">Projects</p>
+                                </a>
+                                <a href="https://www.linkedin.com/in/aminul-islam-niloy-78ba98167" title="LinkedIn" class="text-center" style="text-decoration: none; color: black; width: 80px;">
+                                    <i class="fa-brands fa-linkedin" style="font-size: 20px;"></i>
+                                    <p class="mt-1 mb-0">Profile</p>
+                                </a>
+                                <a href="https://www.facebook.com/aminulislamniloy122/" title="Facebook" class="text-center" style="text-decoration: none; color: black; width: 80px;">
+                                    <i class="fa-brands fa-facebook" style="font-size: 20px;"></i>
+                                    <p class="mt-1 mb-0">Find Us</p>
+                                </a>
+                                <a href="https://www.instagram.com/aminul_islam_122/?hl=en" title="Instagram" class="text-center" style="text-decoration: none; color: black; width: 80px;">
+                                    <i class="fa-brands fa-instagram" style="font-size: 20px;"></i>
+                                    <p class="mt-1 mb-0">Photos</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5 col-md-7">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <div class="widgets_container widget_menu">
+                                    <h3>CUSTOMER SERVICE</h3>
+                                    <div class="footer_menu">
+                                        <ul>
+                                            <li><a href="#">Shipping & Returns</a></li>
+                                            <li><a href="#"> Secure Shopping</a></li>
+                                            <li><a href="#">International Shipping</a></li>
+                                            <li><a href="#"> Affiliates</a></li>
+                                            <li><a href="contact.html"> Contact</a></li>
+                                            <li><a href="#"> Travel</a></li>
+                                            <li><a href="#">ecommerce</a></li>
+                                            <li><a href="#"> Creative</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <div class="widgets_container widget_menu">
+                                    <h3>Information</h3>
+                                    <div class="footer_menu">
+                                        <ul>
+                                            <li><a href="about.html">About Us</a></li>
+                                            <li><a href="#">Delivery infomation</a></li>
+                                            <li><a href="#">Privacy Policy</a></li>
+                                            <li><a href="#"> Travel</a></li>
+                                            <li><a href="blog.html">Blog</a></li>
+                                            <li><a href="#">Portfolio</a></li>
+                                            <li><a href="#">Conditions</a></li>
+                                            <li><a asp-area="Customer" asp-controller="Feedback" asp-action="Create"> Feedback</a></li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-3 col-md-12">
+                        <div class="widgets_container">
+                            <h3>Latest Posts</h3>
+                            <div class="Latest_Posts_wrapper">
+                                <div class="single_Latest_Posts">
+                                    <div class="Latest_Posts_thumb">
+                                        <a href="/Customer/Blog"><img src="~/img/blog/71fb047f-bdf5-4721-ac18-a2cf825210c6_Organic-food banner.jpg" alt=""></a>
+                                    </div>
+                                    <div class="Latest_Posts_content">
+                                        <h3><a asp-action="Details" asp-area="Customer" asp-controller="Blog" asp-route-id="1">Blog image post</a></h3>
+                                        <span><i class="zmdi zmdi-card-sd"></i> 10 August, 2024</span>
+                                    </div>
+                                </div>
+                                <div class="single_Latest_Posts">
+                                    <div class="Latest_Posts_thumb">
+                                        <a href="/Customer/Blog"><img src="~/img/blog/maxresdefault.jpg" alt=""></a>
+                                    </div>
+                                    <div class="Latest_Posts_content">
+                                        <h3><a asp-action="Details" asp-area="Customer" asp-controller="Blog" asp-route-id="2">Blog image post</a></h3>
+                                        <span><i class="zmdi zmdi-card-sd"></i> 10 August, 2024</span>
+                                    </div>
+                                </div>
+                                <div class="single_Latest_Posts">
+                                    <div class="Latest_Posts_thumb">
+                                        <a href="/Customer/Blog"><img src="~/img/blog/wuan.jpg" alt=""></a>
+                                    </div>
+                                    <div class="Latest_Posts_content">
+                                        <h3><a asp-action="Details" asp-area="Customer" asp-controller="Blog" asp-route-id="1">Blog image post</a></h3>
+                                        <span><i class="zmdi zmdi-card-sd"></i> 10 August, 2024</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="footer_tag">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="footer_tag_container">
+                            <div class="footer_tag_menu">
+                                <h3>Vagitable :</h3>
+                                <ul>
+                                    <li><a href="#">Tomatto</a></li>
+                                    <li><a href="#">Potato</a></li>
+
+                                </ul>
+                            </div>
+                            <div class="footer_tag_menu">
+                                <h3>Fish :</h3>
+                                <ul>
+                                    <li><a href="#">Hilsha</a></li>
+                                    <li><a href="#">Rui</a></li>
+                                    <li><a href="#">Tuna</a></li>
+                                    <li><a href="#">Carp</a></li>
+                                    <li><a href="#">Lobstar</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer_bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-7">
+                        <div class="copyright_area">
+                            <p>Copyright &copy; 2024 <a href="#"> Organic Option </a>  All Right Reserved.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-5">
+                        <div class="footer_payment text-right">
+                            <p><img src="assets/img/icon/payment.png" alt=""></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--footer area end-->
+
+    <script>
+        function updateLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    document.getElementById('latitude').value = latitude;
+                    document.getElementById('longitude').value = longitude;
+
+                    document.getElementById('update-location-form').submit();
+                }, function (error) {
+                    console.error('Error getting location:', error);
+                    alert('Failed to get location.');
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.add-to-favorites', function () {
+                var shopId = $(this).data('shop-id');
+                console.log("Shop ID: " + shopId);
+
+                $.ajax({
+                    url: '@Url.Action("AddToFavorites", "Favorites", new { area = "Customer" })',
+                    type: 'POST',
+                    data: { shopId: shopId },
+                    success: function () {
+                        alert('Shop added to favorites.');
+                    },
+                    error: function () {
+                        alert('Error occurred while adding shop to favorites.');
+                    }
+                });
+            });
+        });
+
+        $(document).on('click', '.remove-from-favorites', function () {
+            var shopId = $(this).data('shop-id');
+            console.log(shopId);
+            $.ajax({
+                url: '@Url.Action("RemoveFromFavorites", "Favorites", new { area = "Customer" })',
+                type: 'POST',
+                data: { shopId: shopId },
+                success: function () {
+                    alert('Shop removed from favorites.');
+                    location.reload();
+                },
+                error: function () {
+                    alert('Error occurred while removing shop from favorites.');
+                }
+            });
+        });
+                                });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#notificationToggle').on('click', function (e) {
+                e.preventDefault();
+                loadNotifications();
+                $('.dropdown-menu').toggle();
+            });
+
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#notificationToggle').length) {
+                    $('.dropdown-menu').hide();
+                }
+            });
+        });
+
+        function loadNotifications() {
+            $.ajax({
+                url: '@Url.Action("GetLatest", "Notifications", new { area = "Customer" })',
+                type: 'GET',
+                success: function (data) {
+                    $('#notificationsContainer').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching notifications:', error);
+                    $('#notificationsContainer').html('<li class="dropdown-item">Login to see notification</li>');
+                }
+            });
+        }
+
+
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRZFGZ97RXs49Jj7jk5DqE0I66rF1q+hmP9zSm4z" crossorigin="anonymous"></script>
+    <!-- Plugins JS -->
+    <script src="/js/jsplugins.js"></script>
+
+    <!-- Main JS -->
+    <script src="/js/jsmain.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

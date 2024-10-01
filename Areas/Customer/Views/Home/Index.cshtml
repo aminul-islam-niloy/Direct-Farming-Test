@@ -1,0 +1,882 @@
+﻿@using OnlineShop.Models;
+@model IndexPageViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string userId = UserManager.GetUserId(User);
+}
+﻿@using System.Net.Http
+@using OnlineShop.Session
+@using Microsoft.AspNetCore.Http
+
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("roleName");
+    int count = 0;
+    List<Products> products = HttpContextAccessor.HttpContext.Session.Get<List<Products>>("products");
+    if (products == null)
+    {
+        products = new List<Products>();
+    }
+    count = products.Count();
+}
+
+
+<!-- category div start -->
+<div class="container my-4">
+    <div class="row">
+        <!-- Category Cards -->
+        <h4 style="color: rgba(24, 170, 63, 0.789); font-size:20px;">
+            CATEGORIES
+        </h4>
+        <div class="col-lg-9 col-md-6 mt-2">
+            <div class="row g-1">
+                <div class="col-6 col-md-3">
+                    <a asp-action="ProductCategory" asp-route-category="Vegetable" style="text-decoration: none;">
+                        <div class="card" style="transition: box-shadow 0.3s ease; height: 220px; width: 200px;">
+                            <img src="/assets/img/product/f1.png" class="card-img-top mt-3" style="height: 150px; width: 100%; object-fit: cover;" alt="Vegetable">
+                            <div class="card-body">
+                                <h5 style="font-weight: bold; text-align: center; height: 100px; position: relative;">Vegetable</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-action="ProductCategory" asp-route-category="Fruits" style="text-decoration: none;">
+                        <div class="card" style="transition: box-shadow 0.3s ease; height: 220px; width: 200px;">
+                            <img src="/assets/img/product/fruits-illustration-01_921799-7.png" class="card-img-top" style="height: 150px; width: 100%; object-fit: cover;" alt="Fruits">
+                            <div class="card-body">
+                                <h5 style="font-weight: bold; text-align: center; height: 100px; position: relative;">Fruits</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-action="ProductCategory" asp-route-category="Fish" style="text-decoration: none;">
+                        <div class="card" style="transition: box-shadow 0.3s ease; height: 220px; width: 200px; margin-bottom: 20px;">
+                            <img src="/assets/img/product/fish.png" class="card-img-top mt-2" style="height: 150px; width: 100%; object-fit: cover;" alt="Fish">
+                            <div class="card-body">
+                                <h5 style="font-weight: bold; text-align: center; height: 100px; position: relative;">Fish</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-action="ProductCategory" asp-route-category="Dairy" style="text-decoration: none;">
+                        <div class="card" style="transition: box-shadow 0.3s ease; height: 220px; width: 200px;">
+                            <img src="/assets/img/product/dairy.png" class="card-img-top" style="height: 150px; width: 100%; object-fit: cover;" alt="Dairy">
+                            <div class="card-body">
+                                <h5 style="font-weight: bold; text-align: center; height: 100px; position: relative;">Dairy</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+
+                    <a asp-action="ProductCategory" asp-route-category="Crops" style="text-decoration: none;">
+                        <div class="card" style="transition: box-shadow 0.3s ease; height: 220px; width: 200px;">
+                            <img src="/assets/img/product/Crops.jpg" class="card-img-top" style="height: 150px; width: 100%; object-fit: cover;" alt="Crops">
+                            <div class="card-body">
+                                <h5 style="font-weight: bold; text-align: center; height: 100px; position: relative;">Crops</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-action="ProductCategory" asp-route-category="Cattle" style="text-decoration: none;">
+                        <div class="card" style="transition: box-shadow 0.3s ease; height: 220px; width: 200px;">
+                            <img src="/assets/img/product/cattle.jpg" class="card-img-top" style="height: 150px; width: 100%; object-fit: cover;" alt="Cattle">
+                            <div class="card-body">
+                                <h5 style="font-weight: bold; text-align: center; height: 100px; position: relative;">Cattle</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-action="ProductCategory" asp-route-category="Meat" style="text-decoration: none;">
+                        <div class="card" style="transition: box-shadow 0.3s ease; height: 220px; width: 200px;">
+                            <img src="/assets/img/product/beef and mutton.jpg" class="card-img-top mt-3" style="height: 150px; width: 100%; object-fit: cover;" alt="Meat">
+                            <div class="card-body">
+                                <h5 style="font-weight: bold; text-align: center; height: 100px; position: relative;">Meat</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-action="ProductCategory" asp-route-category="Pets" style="text-decoration: none;">
+                        <div class="card" style="transition: box-shadow 0.3s ease; height: 220px; width: 200px;">
+                            <img src="/assets/img/product/others.jpg" class="card-img-top mt-3" style="height: 150px; width: 100%; object-fit: cover;" alt="Others">
+                            <div class="card-body">
+                                <h5 style="font-weight: bold; text-align: center; height: 100px; position: relative;">Pet</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+       <div class="col-md-3 col-lg-3 " style="background-color: #fafafa; border-radius: 10px; box-shadow: 0px 4px 8px rgba(134, 133, 133, 0.1); padding: 20px;">
+
+
+            <h4 class="TitleCard text-center" style="font-size:20px;  padding:2px ; font-weight:500">Find Nearby Shop</h4>
+   
+            <div class="row mt-2 " style="margin-top:5px">
+                <div class="col-6">
+                    <div class="Innercard Innercard-2  text-center">
+     
+                            <form id="update-location-form" method="post" asp-area="Customer" asp-controller="UserProfile" asp-action="UpdateLocation">
+                            
+                                <input type="hidden" id="latitude" name="latitude" />
+                                <input type="hidden" id="longitude" name="longitude" />
+                            <a class="btn" onclick="updateLocation()">  <i class="fa-solid fa-location-dot fa-2x"></i><span style="font-size:18px; font-weight:700;">  Update Location</span></a>
+                            </form>
+                        </div>
+                        
+                  
+                </div>
+                <div class="col-6">
+                    <a asp-area="Admin" asp-controller="ProductPrice" asp-action="TodayPrice">
+                        <div class="Innercard Innercard-3">
+                            <img src="/assets/img/product/daily price.png" class="img-fluid rounded " style="height:100px;margin-bottom:7px; width:100px" alt="Product Price Image">
+
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a asp-area="Farmer" asp-controller="FarmerShop" asp-action="AllShop">
+                        <div class="Innercard Innercard-1">
+                        <img src="/assets/img/product/nearby-shop.png" class="img-fluid rounded " style="height:100px;margin-bottom:7px; width:100px" alt="Product Price Image">
+
+                </div>
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a asp-action="Index" asp-controller="Blog" asp-area="Customer">
+                        <div class="Innercard Innercard-4">
+                            <img src="/assets/img/product/blogs.png" class="img-fluid rounded " style="height:100px;margin-bottom:7px; width:100px" alt="Product Price Image">
+
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Other Services Section -->
+            <h4 class="mt-2">Other Services</h4>
+            <div class="row other-services mt-2">
+                <div class="col-4">
+                    <a asp-area="Customer" asp-controller="Feedback" asp-action="Create">
+                    <div class="OtherIncard text-center">
+                        <i class="fa-regular fa-comments fa-2x"></i>
+                       
+                    </div>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a asp-action="Products" asp-controller="Home" asp-area="Customer">
+                    <div class="OtherIncard text-center">
+                        <img src="/assets/img/product/products.png" class="img-fluid rounded " style="height:40px; width:400px" alt="Product Price Image">
+                    </div>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <div class="OtherIncard text-center">
+                        <i class="fa-solid fa-fan fa-2x"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<!-- category div End -->
+<!--deals product section area start-->
+<section class="deals_product_section mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section_title">
+                    <h2>Today’s <span>Deals</span></h2>
+                </div>
+                <div class="deals_product_inner">
+                    <div class="deals_tab_list deals_tab_two">
+                        <ul class="nav" role="tablist">
+                            <li>
+                                <a class="active" data-bs-toggle="tab" href="#Fruits" role="tab" aria-controls="Fruits" aria-selected="true">
+                                    <i class="fa-solid fa-apple-whole"></i>
+                                    <h3>Fruits</h3>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tab" href="#Vegetable" role="tab" aria-controls="Vegetable" aria-selected="false">
+                                    <i class="fa-solid fa-carrot"></i>
+                                    <h3>Vegetable</h3>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tab" href="#Dairy" role="tab" aria-controls="Dairy" aria-selected="false">
+                                    <i class="fa-solid fa-egg"></i>
+                                    <h3>Dairy</h3>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tab" href="#Pets" role="tab" aria-controls="Pets" aria-selected="false">
+                                    <i class="fa-solid fa-crow"></i>
+                                    <h3>Pets</h3>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tab" href="#Fish" role="tab" aria-controls="Fish" aria-selected="false">
+                                    <i class="fa-solid fa-fish"></i>
+                                    <h3>Fish  </h3>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tab" href="#Cattle" role="tab" aria-controls="Cattle" aria-selected="false">
+                                    <i class="fa-solid fa-cow"></i>
+                                    <h3>Cattle</h3>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tab" href="#Meat" role="tab" aria-controls="Meat" aria-selected="false">
+                                    <i class="fa-solid fa-drumstick-bite"></i>
+                                    <h3>Meat</h3>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tab" href="#Crops" role="tab" aria-controls="Crops" aria-selected="false">
+                                    <i class="fa-solid fa-cannabis"></i>
+                                    <h3>Crops</h3>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="deals_product_wrapper">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="Fruits" role="tabpanel">
+                                <div class="deals_product_carousel deals_product_column2 owl-carousel">
+                                    @foreach (var product in Model.Fruits)
+                                    {
+                                       
+                                        <div class="single_deals_product">
+                                            <div class="product_thumb">
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height: 320px; width: 60%;  border-top:5px;" alt="Card Image"></a>
+                                                <div class="label_product">
+                                                    <span class="label_sale">sale</span>
+                                                </div>
+                                                <div class="product_timing">
+                                                    <div class="alarm_icone">
+                                                        <i class="zmdi zmdi-timer"></i>
+                                                    </div>
+                                                    <div data-countdown="@product.ExpirationTime"></div>
+                                                </div>
+                                            </div>
+                                            <div class="product_content " style="margin-top:40px">
+                                                <div class="product_name">
+                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                </div>
+
+                                                <div class="price_box">
+                                                    <span class="current_price"> @product.Price ৳ </span>
+                                                </div>
+                                                <div class="action_links">
+                                                    <ul>
+
+                                                        <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                   
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Vegetable" role="tabpanel">
+                                <div class="deals_product_carousel deals_product_column2 owl-carousel">
+                                    @foreach (var product in Model.Vegetable)
+                                    {
+                                        <div class="single_deals_product">
+                                            <div class="product_thumb">
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height: 320px; width: 60%; border-top:5px;" alt="Card Image"></a>
+                                                <div class="label_product">
+                                                    <span class="label_sale">sale</span>
+                                                </div>
+                                                <div class="product_timing">
+                                                    <div class="alarm_icone">
+                                                        <i class="zmdi zmdi-timer"></i>
+                                                    </div>
+                                                    <div data-countdown="@product.ExpirationTime"></div>
+                                                </div>
+                                            </div>
+                                            <div class="product_content " style="margin-top:40px">
+                                                <div class="product_name">
+                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                </div>
+
+                                                <div class="price_box">
+                                                    <span class="current_price"> @product.Price ৳ </span>
+                                                </div>
+                                                <div class="action_links">
+                                                    <ul>
+
+                                                        <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Dairy" role="tabpanel">
+                                <div class="deals_product_carousel deals_product_column2 owl-carousel">
+                                    @foreach (var product in Model.Dairy)
+                                    {
+                                        <div class="single_deals_product" >
+                                            <div class="product_thumb">
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height: 320px; width: 60%; border-top:5px;" alt="Card Image"></a>
+                                                <div class="label_product">
+                                                    <span class="label_sale">sale</span>
+                                                </div>
+                                                <div class="product_timing">
+                                                    <div class="alarm_icone">
+                                                        <i class="zmdi zmdi-timer"></i>
+                                                    </div>
+                                                    <div data-countdown="2024/8/31"></div>
+                                                </div>
+                                            </div>
+                                            <div class="product_content" style="margin-top:40px">
+                                                <div class="product_name">
+                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                </div>
+
+                                                <div class="price_box">
+                                                    <span class="current_price"> @product.Price ৳ </span>
+                                                </div>
+                                                <div class="action_links">
+                                                    <ul>
+
+                                                        <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Pets" role="tabpanel">
+                                <div class="deals_product_carousel deals_product_column2 owl-carousel">
+                                    @foreach (var product in Model.Pets)
+                                    {
+                                        <div class="single_deals_product">
+                                            <div class="product_thumb">
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height: 320px; width: 60%; border-top:5px;" alt="Card Image"></a>
+                                                <div class="label_product">
+                                                    <span class="label_sale">sale</span>
+                                                </div>
+                                                <div class="product_timing">
+                                                    <div class="alarm_icone">
+                                                        <i class="zmdi zmdi-timer"></i>
+                                                    </div>
+                                                    <div data-countdown="2024/8/31"></div>
+                                                </div>
+                                            </div>
+                                            <div class="product_content" style="margin-top:40px">
+                                                <div class="product_name">
+                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                </div>
+
+                                                <div class="price_box">
+                                                    <span class="current_price"> @product.Price ৳ </span>
+                                                </div>
+                                                <div class="action_links">
+                                                    <ul>
+
+                                                        <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Fish" role="tabpanel">
+                                <div class="deals_product_carousel deals_product_column2 owl-carousel">
+                                    @foreach (var product in Model.Fish)
+                                    {
+                                        <div class="single_deals_product">
+                                            <div class="product_thumb">
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height: 320px; width: 60%; border-top:5px; " alt="Card Image"></a>
+                                                <div class="label_product">
+                                                    <span class="label_sale">sale</span>
+                                                </div>
+                                                <div class="product_timing">
+                                                    <div class="alarm_icone">
+                                                        <i class="zmdi zmdi-timer"></i>
+                                                    </div>
+                                                    <div data-countdown="2024/8/31"></div>
+                                                </div>
+                                            </div>
+                                            <div class="product_content" style="margin-top:40px">
+                                                <div class="product_name">
+                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                </div>
+
+                                                <div class="price_box">
+                                                    <span class="current_price"> @product.Price ৳ </span>
+                                                </div>
+                                                <div class="action_links">
+                                                    <ul>
+
+                                                        <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Cattle" role="tabpanel">
+                                <div class="deals_product_carousel deals_product_column2 owl-carousel">
+                                    @foreach (var product in Model.Cattle)
+                                    {
+                                        <div class="single_deals_product">
+                                            <div class="product_thumb">
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height: 320px; width: 60%; border-top:5px;" alt="Card Image"></a>
+                                                <div class="label_product">
+                                                    <span class="label_sale">sale</span>
+                                                </div>
+                                                <div class="product_timing">
+                                                    <div class="alarm_icone">
+                                                        <i class="zmdi zmdi-timer"></i>
+                                                    </div>
+                                                    <div data-countdown="2024/8/31"></div>
+                                                </div>
+                                            </div>
+                                            <div class="product_content" style="margin-top:40px">
+                                                <div class="product_name">
+                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                </div>
+
+                                                <div class="price_box">
+                                                    <span class="current_price"> @product.Price ৳ </span>
+                                                </div>
+                                                <div class="action_links">
+                                                    <ul>
+
+                                                        <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                                    </ul>
+                                                </div>
+                                          
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Meat" role="tabpanel">
+                                <div class="deals_product_carousel deals_product_column2 owl-carousel">
+                                    @foreach (var product in Model.Meat)
+                                    {
+                                        <div class="single_deals_product">
+                                            <div class="product_thumb">
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height: 320px; width: 60%; border-top:5px;" alt="Card Image"></a>
+                                                <div class="label_product">
+                                                    <span class="label_sale">sale</span>
+                                                </div>
+                                                <div class="product_timing">
+                                                    <div class="alarm_icone">
+                                                        <i class="zmdi zmdi-timer"></i>
+                                                    </div>
+                                                    <div data-countdown="2024/8/31"></div>
+                                                </div>
+                                            </div>
+                                            <div class="product_content" style="margin-top:40px">
+                                                <div class="product_name">
+                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                </div>
+
+                                                <div class="price_box">
+                                                    <span class="current_price"> @product.Price ৳ </span>
+                                                </div>
+                                                <div class="action_links">
+                                                    <ul>
+
+                                                        <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Crops" role="tabpanel">
+                                <div class="deals_product_carousel deals_product_column2 owl-carousel">
+                                    @foreach (var product in Model.Crops)
+                                    {
+                                        <div class="single_deals_product">
+                                            <div class="product_thumb">
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height: 320px; width: 60%; border-top:5px;" alt="Card Image"></a>
+                                                <div class="label_product">
+                                                    <span class="label_sale">sale</span>
+                                                </div>
+                                                <div class="product_timing">
+                                                    <div class="alarm_icone">
+                                                        <i class="zmdi zmdi-timer"></i>
+                                                    </div>
+                                                    <div data-countdown="2024/8/31"></div>
+                                                </div>
+                                            </div>
+                                            <div class="product_content" style="margin-top:40px">
+                                                <div class="product_name">
+                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                </div>
+
+                                                <div class="price_box">
+                                                    <span class="current_price"> @product.Price ৳ </span>
+                                                </div>
+                                                <div class="action_links">
+                                                    <ul>
+
+                                                        <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--deals product section area end-->
+<!--new product area start-->
+<section class="new_product_area mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section_title">
+                    <h2>New <span>Products</span></h2>
+                </div>
+            </div>
+        </div>
+        <div class="new_product_two_container">
+            <div class="row no-gutters">
+                <div class="col-lg-3 col-md-12">
+                    <div class="single_banner">
+                        <div class="banner_thumb">
+                            <a asp-area="" asp-controller="Home" asp-action="Products"><img src="~/img/bg/new Products.jpg" alt="" /></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-12">
+                    <div class="product_carousel product_column3 owl-carousel">
+                        @foreach (var product in Model.products)
+                        {
+                            <div class="single_product">
+                                <div class="product_thumb">
+                                    <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id">
+                                        <img src="~/@product.Image" alt="product image" class="card-img-top" style="height: 250px; width: 100%; object-fit: cover;border-top:10px; border-top-left-radius: 5px; border-top-right-radius: 5px;" />
+                                    </a>
+                                    <div class="label_product">
+                                        <span class="label_sale">sale</span>
+                                    </div>
+                                    <div>
+                                        <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" data-bs-toggle="modal" data-bs-target="#modal_box" title="quick view"> </a>
+                                    </div>
+                                </div>
+                                <div class="product_content">
+                                    <div class="product_name">
+                                        <h3><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id">@product.Name</a></h3>
+                                    </div>
+                                    <div class="product_rating">
+                                        <ul>
+                                            <li> <a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li> <a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li> <a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li> <a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="price_box">
+                                        <span class="current_price"> @product.Price ৳</span>
+                                    </div>
+                                    <div class="action_links">
+                                        <ul>
+                                           
+                                            <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Buy Now</a></li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--new product area end-->
+<!--banner area start-->
+<div class="banner_area banner_column2 mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <div class="single_banner">
+                    <div class="banner_thumb">
+                        <a asp-area="" asp-controller="Home" asp-action="Products"> <img src="~/img/bg/fish.png" style="height:220px" alt=""></a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <div class="single_banner">
+                    <div class="banner_thumb">
+                        <a asp-area="" asp-controller="Home" asp-action="Products"><img src="~/img/bg/vegetable.jpg" alt=""></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--banner area end-->
+<!--custom product area start-->
+<section class="custom_product_area mb-50">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-4">
+                <div class="small_product_area">
+                    <div class="section_title">
+                        <h2>Organic  <span>Vegetable</span></h2>
+                    </div>
+                    <div class="small_product_wrapper">
+
+                        @foreach (var product in Model.Vegetable)
+                        {
+                            <div class="small_product_items">
+                                <div class="product_thumb">
+                                    <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id">
+                                        <img src="~/@product.Image" alt="product image" />
+                                    </a>
+                                </div>
+                                <div class="product_content">
+                                    <div class="product_name">
+                                        <h3><a href="product-details.html">@product.Name</a></h3>
+                                    </div>
+                                    <div class="product_rating">
+                                        <ul>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="price_box">
+                                        <span class="current_price">@product.Price  ৳</span>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        }
+
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="small_product_area">
+                    <div class="section_title">
+                        <h2>Organic <span>Fish</span></h2>
+                    </div>
+                    <div class="small_product_wrapper">
+
+                        @foreach (var product in Model.Fish)
+                        {
+                            <div class="small_product_items">
+                                <div class="product_thumb">
+                                    <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id">
+                                        <img src="~/@product.Image" alt="product image" />
+                                    </a>
+                                </div>
+                                <div class="product_content">
+                                    <div class="product_name">
+                                        <h3><a href="product-details.html">@product.Name</a></h3>
+                                    </div>
+                                    <div class="product_rating">
+                                        <ul>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="price_box">
+                                        <span class="current_price">@product.Price  ৳</span>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-lg-4">
+                <div class="small_product_area">
+                    <div class="section_title">
+                        <h2>Dairy <span>Products</span></h2>
+                    </div>
+
+                    <div class="small_product_wrapper">
+                        @foreach (var product in Model.Dairy)
+                        {
+                            <div class="small_product_items">
+                                <div class="product_thumb">
+                                    <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id">
+                                        <img src="~/@product.Image" alt="product image" />
+                                    </a>
+                                </div>
+                                <div class="product_content">
+                                    <div class="product_name">
+                                        <h3><a href="product-details.html">@product.Name</a></h3>
+                                    </div>
+                                    <div class="product_rating">
+                                        <ul>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                            <li><a href="#"><i class="zmdi zmdi-star-outline"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="price_box">
+                                        <span class="current_price">@product.Price  ৳</span>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--custom product area end-->
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
+<style>
+    .card:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+
+    .Innercard {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .OtherIncard {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 5px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .TitleCard {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 40px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 5px;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .Innercard-1 {
+        background-color: #71e9e7;
+    }
+
+    .Innercard-2 {
+        background-color: #dac4e2;
+    }
+
+    .Innercard-3 {
+        background-color: #ffcdd2;
+    }
+
+    .Innercard-4 {
+        background-color: #bbdefb;
+    }
+
+    .other-services .cInnercardard {
+        height: 40px;
+    }
+
+</style>
+
+
+
+

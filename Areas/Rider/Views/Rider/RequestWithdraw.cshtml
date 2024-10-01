@@ -1,0 +1,52 @@
+﻿@model OrganicOption.Models.Rider_Section.RiderModel
+
+<br />
+
+<div class="container ">
+  
+
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 30vh;">
+    <div class="card shadow p-4" style="max-width: 600px; width: 100%;">
+       
+
+        <h3 class="mb-4 text-center">Request Withdrawal</h3>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h4>Farmer Revenue</h4>
+                <h4><strong>Total Revenue:</strong> @Model.Revenue</h4>
+            </div>
+            <div class="col-md-12 mt-3">
+                <form asp-action="RequestWithdraw" method="post">
+                    <div class="form-group d-flex justify-content-center align-items-end">
+                        <input type="number" class="form-control me-2" id="Amount" name="Amount" placeholder="Withdrawal Amount" style="max-width:200px" required />
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<style>
+    .top-bar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        left: 0;
+        background: #1cb252;
+        color: black;
+    }
+
+        .top-bar .nav-item {
+            margin-right: 20px;
+        }
+
+    .card {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+</style>

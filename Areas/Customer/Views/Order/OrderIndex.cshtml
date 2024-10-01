@@ -1,0 +1,41 @@
+﻿@model IEnumerable<OrganicOption.Models.View_Model.AllOrderViewModel>
+
+<div class="container mt-4">
+    <h2>Orders</h2>
+    <form method="post" class="form-inline mb-3" action="/Order/AllOrderIndex">
+        <input type="hidden" id="dateRange" name="dateRange" />
+        <div class="btn-group mt-3">
+            <button type="button" class="btn btn-secondary" onclick="setDateRange('today')">Today</button>
+            <button type="button" class="btn btn-secondary" onclick="setDateRange('thisWeek')">This Week</button>
+            <button type="button" class="btn btn-secondary" onclick="setDateRange('thisMonth')">This Month</button>
+            <button type="button" class="btn btn-secondary" onclick="setDateRange('lastMonth')">Last Month</button>
+        </div>
+        <button type="submit" class="btn btn-primary ml-2">Filter</button>
+    </form>
+
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <script>
+        function setDateRange(range) {
+            let start, end;
+            if (range === 'today') {
+                start = moment().format('YYYY-MM-DD');
+                end = moment().format('YYYY-MM-DD');
+            } else if (range === 'thisWeek') {
+                start = moment().startOf('week').format('YYYY-MM-DD');
+                end = moment().endOf('week').format('YYYY-MM-DD');
+            } else if (range === 'thisMonth') {
+                start = moment().startOf('month').format('YYYY-MM-DD');
+                end = moment().endOf('month').format('YYYY-MM-DD');
+            } else if (range === 'lastMonth') {
+                start = moment().subtract(1, 'month').startOf('month').format('YYYY-MM-DD');
+                end = moment().subtract(1, 'month').endOf('month').format('YYYY-MM-DD');
+            }
+            $('#dateRange').val(`${start} - ${end}`);
+        }
+    </script>
+}

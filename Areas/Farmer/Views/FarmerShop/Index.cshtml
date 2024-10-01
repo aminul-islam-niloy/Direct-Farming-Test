@@ -1,0 +1,224 @@
+﻿@model OrganicOption.Models.FarmerShop
+
+<br />
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-8 mb-4">
+            @if (Model.CoverPhoto != null)
+            {
+                <img src="data:image;base64,@Convert.ToBase64String(Model.CoverPhoto)" class="img-fluid rounded" alt="Cover Photo" />
+            }
+            else
+            {
+                <p>No cover photo available</p>
+            }
+        </div>
+
+        <div class="col-md-4 mb-4 mt-2">
+
+            <div class="card" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 1rem;">
+
+                <div class="card-header text-center" style="font-size: 1.25rem; font-weight: bold;">
+                    @Model.ShopName
+                </div>
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <p><strong>Open Status: @(Model.IsShopOpen ? "Open" : "Closed") </strong></p>
+                        <form id="shop-status-form" asp-action="EditOpenStatus" method="post" style="margin: 0;">
+                            <input type="hidden" name="Id" value="@Model.Id" />
+                            <label class="switch" style="margin: 0;">
+                                <input type="checkbox" id="IsShopOpen" name="IsShopOpen" value="true" @(Model.IsShopOpen ? "checked" : "") />
+                                <span class="slider round"></span>
+                            </label>
+                        </form>
+                    </div>
+
+                    <h4 style="margin-bottom: 1rem;">Shop Management</h4>
+                    <div class="btn-group-vertical w-100  mb-3" role="group" aria-label="Shop Management Buttons">
+                     
+                            <a asp-action="Edit" asp-controller="FarmerShop" asp-route-id="@Model.Id" class="btn btn-info mb-2">
+                            <i class="fas fa-edit"></i>&nbsp; Edit
+                        </a>
+                           @*  <a asp-action="Delete" asp-controller="FarmerShop" asp-route-id="@Model.Id" class="btn btn-danger mb-2" style="margin:7px">
+                            <i class="fas fa-trash-alt"></i>&nbsp; Delete
+                        </a> *@
+                     
+                        <a class="btn  mb-3" style="background:#40c791" href="@Url.Action("Shop", "FarmerShop", new { area = "Farmer", shopId = @Model.Id })">
+                            <i class="fas fa-box"></i>&nbsp; Visit Shop
+                        </a>
+                    </div>
+
+                    <div class="row ">
+                        <div class="btn-group d-flex">
+                     
+                            <a asp-action="Index" asp-area="Farmer" asp-controller="Inventory" class="btn  btn-sm " style=" background:#e45982 ;margin:5px">
+                                <i class="fas fa-archive"></i>&nbsp; Inventory
+                            </a>
+                    
+                            <a asp-action="AllOrdersGroupedByDate" asp-area="Farmer" asp-controller="Inventory" class="btn btn-success btn-sm " style="margin:5px">
+                                <i class="fas fa-clipboard-list"></i>&nbsp; Orders
+                            </a>
+                            </div>
+                    
+                        <div class="btn-group d-flex">
+                            <a asp-action="ShowAllProductsByTime" asp-area="Farmer" asp-controller="Inventory" class="btn btn-warning btn-sm " style="margin:5px">
+                                <i class="fas fa-clock"></i>&nbsp; Products Time
+                            </a>
+
+                            <a asp-action="AddProduct" class="btn btn-danger btn-sm " style="margin:5px">
+                                <i class="fas fa-plus"></i>&nbsp; Add Product
+                            </a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div>
+
+        <table class="table table-bordered mt-3" id="myTable">
+            <thead>
+                <tr class="table-info">
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Available</th>
+                    <th>Preservation?</th>
+                    <th>Quantity</th>
+                    <th>Expire On</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Products != null)
+                {
+                    @foreach (var item in Model.Products)
+                    {
+                        <tr>
+                            <td><img src="~/@item.Image" style="max-width: 50px; max-height: 50px;" /></td>
+                            <td>@item.Name</td>
+                            <td>@item.Price</td>
+                            <td>@item.IsAvailable</td>
+                            <td>@item.PreservationRequired</td>
+                            <td>@item.Quantity @item.QuantityType</td>
+
+                            @{
+                                TimeSpan difference = item.ExpirationTime - DateTime.Now;
+                                int d = (int)difference.TotalDays;
+                                int hours = difference.Hours;
+                                int minutes = difference.Minutes;
+                                int seconds = difference.Seconds;
+                            }
+                            <td>@d D @hours H @minutes Min</td>
+                            <td style="width: 150px">
+                                <div class="btn-group">
+                                    <a asp-action="EditProduct" class="btn btn-primary" asp-controller="FarmerShop" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a asp-action="ProductDetails" class="btn btn-success" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i></a>
+                                    <a asp-action="ProductDelete" class="btn btn-danger" asp-route-id="@item.Id"><i class="fa-solid fa-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8">No products available</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#IsShopOpen').change(function () {
+            var form = $('#shop-status-form');
+            var formData = form.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                data: formData,
+                success: function (response) {
+
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+ /*    .btn {
+        display: inline-flex;
+        align-items: center;
+        font-size: 16px;
+    } */
+
+        /* .btn i {
+            margin-right: 8px;
+        } */
+
+</style>

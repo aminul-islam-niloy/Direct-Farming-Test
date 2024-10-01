@@ -1,0 +1,53 @@
+﻿@model OrganicOption.Models.Rider_Section.RiderModel
+
+
+<br />
+<div class="container">
+ 
+
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 30vh;">
+        <div class="card shadow p-4" style="max-width: 700px; width: 100%;">
+            <div class="text-center">
+                <h4 class="mb-2">Rider Revenue</h4>
+                <hr />
+            </div>
+            <div class="row justify-content-center text-center">
+                <div class="col-md-3 mb-3">
+                    <h4>Total Revenue</h4>
+                    <p>@Model.Revenue</p>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <h4>Total Due</h4>
+                    <p>@Model.RiderDue</p>
+                </div>
+                <div class="d-flex justify-content-center">
+                 
+                    <a href="@Url.Action("RequestWithdraw", "Rider")" class="btn btn-primary">Request Withdrawal</a>
+                    <a href="@Url.Action("WithdrawHistory", "Rider")" class="btn btn-secondary " style="margin-left:7px">History Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .top-bar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        left: 0;
+        background: #1cb252;
+        color: black;
+    }
+
+        .top-bar .nav-item {
+            margin-right: 20px;
+        }
+
+    .card {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+</style>

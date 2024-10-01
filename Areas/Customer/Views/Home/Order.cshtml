@@ -1,0 +1,69 @@
+﻿@model OnlineShop.Models.Order
+
+﻿@using OnlineShop.Models
+
+@{
+    ViewData["Title"] = "Cart";
+}
+
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string userId = UserManager.GetUserId(User);
+}
+﻿@using System.Net.Http
+@using OnlineShop.Session
+@using Microsoft.AspNetCore.Http
+
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("roleName");
+    int count = 0;
+    List<Products> products = HttpContextAccessor.HttpContext.Session.Get<List<Products>>("products");
+    if (products == null)
+    {
+        products = new List<Products>();
+    }
+    count = products.Count();
+
+}
+
+
+<h3>Order Details</h3>
+
+<p><strong>Order No:</strong> @Model.OrderNo</p>
+<p><strong>Name:</strong> @Model.Name</p>
+<p><strong>Phone No:</strong> @Model.PhoneNo</p>
+<p><strong>Email:</strong> @Model.Email</p>
+<p><strong>Address:</strong> @Model.Address</p>
+<p><strong>Order Date:</strong> @Model.OrderDate</p>
+
+<h4>Order Items</h4>
+
+<div class="row col-lg-12 col-md-10 col-12">
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var orderDetail in Model.OrderDetails)
+        {
+            <tr>
+                <td>@orderDetail.Product.Name</td>
+                    <td>@orderDetail.Product.Price ৳‎</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<a asp-action="Index" class="btn btn-primary">Back to Orders</a>
+
+</div>

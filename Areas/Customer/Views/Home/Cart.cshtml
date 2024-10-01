@@ -1,0 +1,160 @@
+﻿﻿@using OnlineShop.Models
+@model List<Products>
+@{
+    ViewData["Title"] = "Cart";
+}
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string userId = UserManager.GetUserId(User);
+}
+﻿@using System.Net.Http
+@using OnlineShop.Session
+@using Microsoft.AspNetCore.Http
+
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("roleName");
+    int count = 0;
+    List<Products> products = HttpContextAccessor.HttpContext.Session.Get<List<Products>>("products");
+    if (products == null)
+    {
+        products = new List<Products>();
+    }
+    count = products.Count();
+}
+
+<!--shopping cart area start -->
+<div class="shopping_cart_area mt-10">
+    <div class="container">
+        <form action="#">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table_desc">
+                        <div class="cart_page table-responsive">
+
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Catagory</th>
+                                      
+                                        <th>Quantity</th>
+                                        <th>Action</th>
+                                      
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-action="Detail" asp-controller="Home" asp-route-id="@item.Id"><img src="~/@item.Image" style="height:100px; width:100px" /></a>
+                                                
+                                            </td>
+                                            <td>@item.Name</td>
+
+                                            @if (item.Discount > 0)
+                                            {
+                                                decimal OldPrice = @item.Price;
+                                                decimal DiscoundPrice = item.DiscountPrice;
+                                                decimal newPrice = OldPrice + DiscoundPrice;
+                                                <td>@newPrice</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@item.Price</td>
+                                            }
+
+                                            <td>@item.ProductTypes.ProductType</td>
+                                         
+                                            <td>@item.QuantityInCart</td>
+                                            <td>
+                                                <a asp-area="Customer" asp-action="RemoveToCart" asp-controller="Home" asp-route-id="@item.Id" >
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--coupon code area start-->
+            <div class="coupon_area">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="coupon_code left ">
+                            <div class="mt-3 mb-3 ml-3" style="margin:15px">
+                            <h3>Conditions: </h3>
+                            <ul> <li>1. Extra Delivary charge will be applicable  when It's over it's limit</li></ul>
+                            <ul> <li>2. Buy Nearby shop to Reduce Delivary charge</li></ul>
+                            <ul> <li>3. Delivary charge will not be Refound</li></ul>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    @if (Model.Count != 0)
+                    {
+                        <div class="col-lg-6 col-md-6">
+                            <div class="coupon_code right">
+                                <h3>Cart Totals</h3>
+                                <div class="coupon_inner  mt-3 mb-3 ml-3">
+                                   
+
+                                    <div class="cart_subtotal">
+                                        <p>Total </p>
+                                      
+                                        @{
+                                            bool HasDiscount = false;
+                                            decimal total = 0;
+
+                                            @foreach(var item in Model)
+                                            {
+                                                if (item.Discount > 0)
+                                                {
+                                                    HasDiscount = true;
+                                                }
+                                            }
+
+                                            @if (HasDiscount)
+                                            {
+                                              decimal  totalSumInCart = @Model.Sum(c => c.Price * c.QuantityInCart);
+                                              decimal totalDisSumInCart = @Model.Sum(c => c.DiscountPrice * c.QuantityInCart);
+                                                total = totalSumInCart + totalDisSumInCart;
+
+                                            }
+                                            else
+                                            {
+                                                total = @Model.Sum(c => c.Price * c.QuantityInCart);
+                                            }
+                                            <p class="cart_amount">@total ৳</p>
+                                        }
+
+                                       
+                                    </div>
+                                    <div class="checkout_btn">
+
+                                        <a asp-area="Customer" asp-action="Checkout" asp-controller="Order"  class="btn btn-info">Proceed to Checkout</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+            </div>
+         
+        </form>
+    </div>
+</div>
+
+

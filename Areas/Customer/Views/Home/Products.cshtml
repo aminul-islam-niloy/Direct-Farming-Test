@@ -1,0 +1,257 @@
+﻿@using OnlineShop.Models;
+@model X.PagedList.IPagedList<Products>
+@using X.PagedList.Mvc.Core
+
+
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string userId = UserManager.GetUserId(User);
+}
+﻿@using System.Net.Http
+@using OnlineShop.Session
+@using Microsoft.AspNetCore.Http
+
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("roleName");
+    int count = 0;
+    List<Products> products = HttpContextAccessor.HttpContext.Session.Get<List<Products>>("products");
+    if (products == null)
+    {
+        products = new List<Products>();
+    }
+    count = products.Count();
+
+}
+
+@{
+    // Convert the discount percentage to a decimal value
+    // decimal discountPercentage = 0.95m;
+}
+
+<!--shop  area start-->
+<div class="shop_area shop_reverse mt-50 mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <!--sidebar widget start-->
+                <aside class="sidebar_widget">
+
+                    <div class="widget_list widget_categories">
+                        <h2>categories</h2>
+                        <ul>
+
+                            @foreach (var productType in ViewData["productTypeSearchId"] as SelectList)
+                            {
+                                <li>
+                                    <a asp-action="ProductCategory" asp-route-category="@productType.Text"> @productType.Text <span> </span></a>
+                                </li>
+                               
+                            }
+                         
+                        </ul>
+                    </div>
+
+                    <br />
+
+                    <div class="widget_list">
+
+                  
+                    <h4 class="card-title">Product Filter with Range</h4>
+                    <br />
+                    <div class="price-range d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="text">Min Price: @ViewData["MinPrice"]</h5>
+                        <h5 class="text">Max Price: @ViewData["MaxPrice"]</h5>
+                    </div>
+
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="lowAmount" class="form-label">Low Amount:</label>
+                                <input type="number" class="form-control" id="lowAmount" name="lowAmount" placeholder="Enter minimum price" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="largeAmount" class="form-label">High Amount:</label>
+                                <input type="number" class="form-control" id="largeAmount" name="largeAmount" placeholder="Enter maximum price" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success float-end"> Filter Price </button>
+                        <br />
+                    </form>
+                    <br />
+                    </div>
+
+                    <div class="widget_list recent_product">
+                        <h2>Top Rated Products</h2>
+
+                        <div class="recent_product_container">
+
+                            @* style="height:270px; width:270px; margin:10px; border:5px" *@
+
+                            @foreach (var product in Model)
+                            {
+
+                                <div class="recent_product_list">
+                                    <div class="recent_product_thumb">
+                                        <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" alt=""></a>
+                                    </div>
+                                    <div class="recent_product_content">
+                                        <h3><a href="product-details.html">@product.Name</a></h3>
+                                       
+                                        <div class="price_box">
+                                            <span class="current_price">@product.Price Tk</span>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+
+
+                        </div>
+                    </div>
+
+                </aside>
+                <!--sidebar widget end-->
+            </div>
+            <div class="col-lg-9 col-md-12">
+
+
+                <!--shop wrapper start-->
+                <!--shop toolbar start-->
+
+                <div class="shop_toolbar_wrapper">
+                    <div class="shop_toolbar_btn">
+                        <button data-role="grid_4" type="button" class="active btn-grid-4" data-bs-toggle="tooltip" title="4"></button>
+
+                        <button data-role="grid_list" type="button" class="btn-list" data-bs-toggle="tooltip" title="List"></button>
+                    </div>
+
+                    <style>
+                       
+                        .form-select {
+                            font-size: 18px;
+                            padding: 10px; 
+                            width: 200px;
+                        }
+                    </style>
+
+                    <div class="dropdown">
+                        <form method="post" class="d-flex">
+                            <select id="sortOrder" name="sortOrder" class="form-select me-2">
+                                <option selected value="PriceLowToHigh">Low to High</option>
+                                <option value="PriceHighToLow">High to Low</option>
+                            </select>
+                            <button class="btn btn-success" style="width:100px; height:auto" type="submit">Sort</button>
+                        </form>
+                    </div>
+
+                    <div class="page_amount">
+                      
+                    </div>
+                </div>
+
+               
+                <!--shop toolbar end-->
+
+                <div class="row no-gutters shop_wrapper">
+
+                    @foreach (var product in Model)
+                    {
+
+                        <div class="col-lg-3 col-md-4 col-12 ">
+                            <div class="single_product" style="margin-top:5px; margin-bottom:5px; margin-left:5px; margin-right:5px; border-radius:5px">
+                                <div class="product_thumb">
+                                    <a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id"><img src="~/@product.Image" style="height:230px; width:Auto; justify-content:center; margin:10px; border:5px" alt=""></a>
+                                    <div class="label_product">
+                                        <span class="label_sale">sale</span>
+                                    </div>
+
+                                </div>
+                                <div class="product_content grid_content">
+                                    <div class="product_name">
+                                        <h3><a href="product-details.html">@product.Name</a></h3>
+                                    </div>
+                                    
+                                    <div class="price_box">
+                                        @* <span class="current_price">@((product.Price * discountPercentage).ToString("C"))</span> *@
+                                        <span class="current_price">@product.Price ৳</span>
+
+                                    </div>
+                                    <div class="action_links">
+                                        <ul>
+                                           
+                                            <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> add to cart</a></li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product_content list_content">
+                                    <div class="product_name">
+                                        <h3><a href="product-details.html">@product.Name</a></h3>
+                                    </div>
+                                   
+                                    <div class="price_box">
+                                        <span class="current_price">@product.Price ৳</span>
+
+                                    </div>
+                                    <div class="action_links">
+                                        <ul>
+                                            
+                                            <li class="add_to_cart"><a asp-action="Detail" asp-controller="Home" asp-route-id="@product.Id" title="add to cart"><i class="zmdi zmdi-shopping-cart-plus"></i> Add to cart</a></li>
+
+                                        </ul>
+                                    </div>
+
+                                    <div class="product_desc">
+                                        <p> @product.Description  Lorem ipsum dolor sit amet, consectetur adipiscing elit.  </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+           @*      <div class="shop_toolbar t_bottom">
+                    <div class="pagination">
+
+                        @Html.PagedListPager(Model, page => Url.Action("Products", new { page, foo1Param = "1", foo2Param = "2"}))
+
+                    </div>
+                </div> *@
+                <!--shop toolbar end-->
+
+              
+            </div>
+        </div>
+    </div>
+</div>
+<!--shop  area end-->
+
+
+
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $slider_area').owlCarousel({
+                items: 1,
+                loop: true,
+                autoplay: true,
+                autoplayTimeout: 5000, 
+                autoplayHoverPause: false,
+                nav: true,
+                dots: false
+            });
+        });
+    </script>
+}
+

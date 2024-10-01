@@ -1,0 +1,190 @@
+﻿﻿@using OnlineShop.Models
+@model OnlineShop.Models.Order
+@using OnlineShop.Session
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+@{
+
+    List<Products> products = HttpContextAccessor.HttpContext.Session.Get<List<Products>>("products");
+
+    if (products == null)
+    {
+        products = new List<Products>();
+    }
+
+}
+
+
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string userId = UserManager.GetUserId(User);
+}
+﻿@using System.Net.Http
+
+
+<!--Checkout page section-->
+<div class="Checkout_section mt-10">
+    <div class="container">
+        <form asp-action="Checkout" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="checkout_form">
+                <div class="row">
+                    <!-- Billing Details -->
+                    <h3>Billing Details</h3>
+                    <div class="col-lg-6 mb-4">
+                        
+
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input type="hidden" asp-for="Id" />
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <!-- PhoneNo -->
+                        <div class="mb-3">
+                            <label asp-for="PhoneNo" class="form-label"></label>
+                            <input asp-for="PhoneNo" class="form-control" />
+                            <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomerAddress.Division" class="form-label"></label>
+                            <input asp-for="CustomerAddress.Division" class="form-control" />
+                            <span asp-validation-for="CustomerAddress.Division" class="text-danger"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                    </div>
+
+                    <!-- Additional Billing Details -->
+                    <div class="col-lg-6 mb-4">
+                        <!-- Customer Address fields -->
+                       
+
+                        <div class="mb-3">
+                            <label asp-for="CustomerAddress.District" class="form-label"></label>
+                            <input asp-for="CustomerAddress.District" class="form-control" />
+                            <span asp-validation-for="CustomerAddress.District" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomerAddress.Thana" class="form-label"></label>
+                            <input asp-for="CustomerAddress.Thana" class="form-control" />
+                            <span asp-validation-for="CustomerAddress.Thana" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomerAddress.WardNo" class="form-label"></label>
+                            <input asp-for="CustomerAddress.WardNo" class="form-control" />
+                            <span asp-validation-for="CustomerAddress.WardNo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomerAddress.StreetNo" class="form-label"></label>
+                            <input asp-for="CustomerAddress.StreetNo" class="form-control" />
+                            <span asp-validation-for="CustomerAddress.StreetNo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomerAddress.House" class="form-label"></label>
+                            <input asp-for="CustomerAddress.House" class="form-control" />
+                            <span asp-validation-for="CustomerAddress.House" class="text-danger"></span>
+                        </div>
+
+                       
+                    </div>
+
+                    <!-- Total Section -->
+                    <div class="row justify-content-end">
+                        <div class="col-lg-6 col-md-12">
+                            <div class="cart_totals text-right mt-4">
+                                <p>Total Delivery Charge: @ViewBag.TotalDeliveryCharge BDT</p>
+                                @{
+                                    var totalDeliveryCharge = Convert.ToDecimal(ViewBag.TotalDeliveryCharge);
+                                    var totalPrice = products.Sum(c => c.DiscountPrice != 0
+                                    ? (c.Price + c.DiscountPrice) * c.QuantityInCart
+                                    : c.Price * c.QuantityInCart);
+                                    var totalPriceWithDeliy = totalPrice + totalDeliveryCharge;
+                                }
+                                <h4>Product Price: @totalPrice Tk</h4>
+                                <h4>Total Price: @totalPriceWithDeliy Tk</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Place Order Button -->
+                    <div class="row justify-content-end">
+                        <div class="col-lg-6 col-md-12 text-right mt-4">
+                            <input type="submit" value="Place Order" class="btn btn-success mt-2" style="width: 200px; background-color: #04AA6D;" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!--Checkout page section end-->
+@section Scripts{
+  @{
+await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+    <script>
+                ৳(document).ready(function () {
+                    ৳("#OrderDate").datepicker({
+                        showAnim: "slide",
+                        changeMonth: true,
+                        changeYear: true
+                    });
+                });
+
+                ৳(document).ready(function () {
+                    ৳('.datepicker').datepicker({
+                    format: 'yyyy-mm-dd',
+                    autoclose: true
+                });
+                });
+
+        function handlePaymentMethodChange() {
+            var paymentMethod = document.getElementById("paymentMethod").value;
+            var paymentFields = document.getElementById("paymentFields");
+            var paymentButton = document.getElementById("paymentButton");
+
+            if (paymentMethod === "Card" || paymentMethod === "MobileBanking") {
+                paymentFields.style.display = "block";
+                paymentButton.style.display = "block";
+            } else {
+                paymentFields.style.display = "none";
+                paymentButton.style.display = "none";
+            }
+        }
+
+        handlePaymentMethodChange();
+
+    </script>
+
+}
+
+
+

@@ -1,0 +1,345 @@
+﻿@using System.Net.Http
+@using OnlineShop.Session
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@using System.Globalization
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("roleName");
+    int count = 0;
+    List<Products> products = HttpContextAccessor.HttpContext.Session.Get<List<Products>>("products");
+    if (products == null)
+    {
+        products = new List<Products>();
+    }
+    count = products.Count();
+}
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string userId = UserManager.GetUserId(User);
+}
+@inject OrganicOption.Service.NotificationService notificationService
+
+@{
+
+    var unreadCount = 0;
+
+    if (userId != null)
+    {
+        unreadCount = notificationService.GetUnreadNotifications(userId).Count();
+    }
+}
+
+@{
+    string UserRole = " ";
+    if (User.IsInRole("Admin"))
+    {
+        UserRole = "Admin";
+    }
+    if (User.IsInRole("SuperAdmin"))
+    {
+        UserRole = "Super Adimin";
+    }
+    if (User.IsInRole("Customer"))
+    {
+        UserRole = "Customer";
+    }
+
+    if (User.IsInRole("Farmer"))
+    {
+        UserRole = "Farmer";
+    }
+
+    if (User.IsInRole("Rider"))
+    {
+        UserRole = "Rider";
+    }
+
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] Organic Option</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+    <link href="@Url.Content("~/desh/css/sb-admin-2.css")" rel="stylesheet" type="text/css">
+
+    <script src="https://kit.fontawesome.com/238e4a8eca.js" crossorigin="anonymous"></script>
+
+</head>
+<body id="page-top">
+
+
+    <div id="wrapper">
+
+        <ul class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion" id="accordionSidebar">
+      
+            <li>
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+                    <img src="~/img/logo/op.png" alt="Logo" style="width:35px; height: 35px;">
+                <div class="sidebar-brand-text mx-3"> @UserRole </div>
+            </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+
+            <li class="nav-item active">
+                <a class="nav-link" asp-action="Index" asp-area="User" asp-controller="Deshboard">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <div class="sidebar-heading"> Account</div>
+
+            <li class="nav-item " >
+                <a class="nav-link collapsed"  asp-area="User" asp-controller="Deshboard" asp-action="MyAccount/@userId" data-toggle="collapse" data-target="#collapseTwo"
+                   aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    <span>My Account</span>
+                </a>
+                <div id="collapseTwo" class="collapse " aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class=" py-2 collapse-inner rounded" style="background:#f4efef">
+                        <h6 class="collapse-header">Custom Components:</h6>
+                        <a class="collapse-item" href="/User/Deshboard/MyAccount/@userId">Profile</a>
+                        <a class="collapse-item" asp-area="User" asp-controller="Deshboard" asp-action="Edit" asp-route-id="@userId">Setting</a>
+
+                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
+                            <button class="collapse-item" type="submit" style="background: none; border: none; width: 100%; text-align: left; padding: 0.75rem 1.25rem; color: #dc3545;">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Logout
+                            </button>
+                        </form>
+                    
+                    
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link " asp-area="User" asp-controller="Deshboard" asp-action="Edit" asp-route-id="@userId" data-target="#collapseUtilities">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Setting</span>
+                </a>
+               
+            </li>
+
+
+            <li><hr class="dropdown-divider"></li>
+
+             @if (userRole == "Customer")
+            {
+                <li> <p class="sidebar-heading"> Shop </p></li>
+               
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Customer"  asp-controller="Order"  asp-action="UserOrders">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span>Orders</span>
+                    </a>
+                </li>
+
+    
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Customer" asp-controller="Favorites" asp-action="FavoriteShop">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>My Favorite</span>
+                </a>
+            </li>
+            }
+            @if (userRole == "Farmer")
+            {
+                <p class="sidebar-heading">
+                    Shop
+                </p>
+     
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Farmer" asp-controller="FarmerShop" asp-action="Index">
+                        <i class="fa-solid fa-shop"></i>
+                        <span>My Shop</span>
+                    </a>
+                </li>
+
+                
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Farmer" asp-controller="Inventory" asp-action="AllOrdersGroupedByDate">
+                        <i class="fa-solid fa-truck-moving"></i>
+                        <span>Orders </span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Farmer" asp-controller="Inventory" asp-action="Index">
+                        <i class="fa-solid fa-cart-flatbed"></i>
+                        <span>Inventory </span>
+                    </a>
+                </li>
+
+               
+            }
+
+            @if (userRole == "Rider")
+            {
+                <p class="sidebar-heading">
+                    Delivary
+                </p>
+          
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Rider"  asp-controller="Rider" asp-action="Index">
+                        <i class="fa-solid fa-truck"></i>
+                        <span>My Ride</span>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Rider" asp-controller="RiderDelivery" asp-action="Index">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span>Delivary </span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Rider" asp-controller="Rider" asp-action="RiderDashboard">
+                        <i class="fa-solid fa-cart-flatbed"></i>
+                        <span>Wallet </span>
+                    </a>
+                </li>
+
+
+            }
+
+            @if (userRole == "Admin")
+            {
+                <p class="sidebar-heading">
+                    Manage
+                </p>
+        
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Customer"  asp-controller="User" asp-action="Index">
+                        <i class="fa-solid fa-people-roof"></i>
+                        <span>Manage User</span>
+                    </a>
+                </li>
+
+         
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Customer" asp-controller="Order" asp-action="AllOrders">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span>All Orders  </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Customer"  asp-controller="Blog" asp-action="BlogManager">
+                        <i class="fa-brands fa-square-font-awesome"></i>
+                        <span>Market Place  </span>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin"  asp-controller="Wallet" asp-action="AllWithdrawals">
+                        <i class="fa-solid fa-cart-flatbed"></i>
+                        <span>Wallet </span>
+                    </a>
+                </li>
+
+
+            }
+
+
+            @if (userRole == "SuperAdmin")
+            {
+                <p class="sidebar-heading">
+                    Manage
+                </p>
+ 
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-controller="Role" asp-action="Index">
+                        <i class="fa-solid fa-people-roof"></i>
+                        <span>Manage Role</span>
+                    </a>
+                </li>
+
+
+            }
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+ 
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+                <div class="container mt-4">
+                    <div class="row mt-2">
+                    </div>
+                </div>
+
+            <partial name="_CookieConsentPartial" />
+            <div>
+                @RenderBody()
+            </div>
+            </div>
+            <!-- End of Main Content -->
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Organic Option 2024</span>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="@Url.Content("~/desh/vendor/jquery/jquery.min.js")"></script>
+    <script src="@Url.Content("~/desh/vendor/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <script src="@Url.Content("~/desh/vendor/jquery-easing/jquery.easing.min.js")"></script>
+    <script src="@Url.Content("~/desh/js/sb-admin-2.min.js")"></script>
+    <script src="@Url.Content("~/desh/vendor/chart.js/Chart.min.js")"></script>
+    <script src="@Url.Content("~/desh/js/demo/chart-area-demo.js")"></script>
+    <script src="@Url.Content("~/desh/js/demo/chart-pie-demo.js")"></script>
+
+    <script>
+        function loadNotifications() {
+            $.ajax({
+                url: '/Customer/Notifications/GetLatest',
+                type: 'GET',
+                success: function (data) {
+                    $('#notificationsContainer').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching notifications:', error);
+                }
+            });
+        }
+
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

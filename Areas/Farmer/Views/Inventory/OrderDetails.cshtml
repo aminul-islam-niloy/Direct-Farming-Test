@@ -1,0 +1,205 @@
+﻿ @model OrderDetailsViewModel
+
+<div class="container mt-2">
+    <a href="javascript:history.back()" class="btn btn-secondary mb-2"><i class="fa fa-arrow-left"></i> Back</a>
+
+    <h3 class="text-black mb-2 text-center">Order Details</h3>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-10">
+            <!-- Single Card for All Information -->
+            <div class="card mb-3 shadow-sm" id="printable-card">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <!-- Customer Information -->
+                            <tr class="justify-content-center text-center text-white" style="background:#37cd4a;">
+                                <th colspan="2">Customer Information</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Name:</strong> @Model.CustomerName</td>
+                                <td><strong>Phone:</strong> @Model.CustomerPhone</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>Address:</strong> @Model.CustomerAddress</td>
+                            </tr>
+                            @if (Model.CuAddress != null)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <strong>Detailed Address:</strong>
+                                        <div class="d-flex flex-wrap">
+                                            <div class="mr-3"><strong>House:</strong> @Html.DisplayFor(modelItem => Model.CuAddress.House)</div>
+                                            <div class="mr-3"><strong>Street No:</strong> @Html.DisplayFor(modelItem => Model.CuAddress.StreetNo)</div>
+                                            <div class="mr-3"><strong>Ward No:</strong> @Html.DisplayFor(modelItem => Model.CuAddress.WardNo)</div>
+                                            <div class="mr-3"><strong>Thana:</strong> @Html.DisplayFor(modelItem => Model.CuAddress.Thana)</div>
+                                            <div class="mr-3"><strong>District:</strong> @Html.DisplayFor(modelItem => Model.CuAddress.District)</div>
+                                            <div><strong>Division:</strong> @Html.DisplayFor(modelItem => Model.CuAddress.Division)</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2">No address available</td>
+                                </tr>
+                            }
+
+
+                            <!-- Shop Information -->
+                            <tr class="justify-content-center text-center text-white" style="background:#b3b3b3;">
+                                <th colspan="2">Shop Information</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Shop ID:</strong> @Model.ShopId</td>
+                                <td><strong>Shop Name:</strong> @Model.ShopName</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>Shop Address:</strong></td>
+                            </tr>
+                            @if (Model.SpAddress != null)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="d-flex flex-wrap">
+                                            <div class="mr-3"><strong>House:</strong> @Html.DisplayFor(modelItem => Model.SpAddress.House)</div>
+                                            <div class="mr-3"><strong>Street No:</strong> @Html.DisplayFor(modelItem => Model.SpAddress.StreetNo)</div>
+                                            <div class="mr-3"><strong>Ward No:</strong> @Html.DisplayFor(modelItem => Model.SpAddress.WardNo)</div>
+                                            <div class="mr-3"><strong>Thana:</strong> @Html.DisplayFor(modelItem => Model.SpAddress.Thana)</div>
+                                            <div class="mr-3"><strong>District:</strong> @Html.DisplayFor(modelItem => Model.SpAddress.District)</div>
+                                            <div><strong>Division:</strong> @Html.DisplayFor(modelItem => Model.SpAddress.Division)</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2">No address available</td>
+                                </tr>
+                            }
+
+                            <!-- Rider Information -->
+                            <tr class="justify-content-center text-center text-white" style="background:#37cd4a;">
+                                <th colspan="2">Rider Information</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Name:</strong> @Model.RiderName</td>
+                                <td><strong>Phone:</strong> @Model.RiderPhone</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>Rider Address:</strong></td>
+                            </tr>
+                            @if (Model.RpAddress != null)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="d-flex flex-wrap">
+                                            <div class="mr-3"><strong>House:</strong> @Html.DisplayFor(modelItem => Model.RpAddress.House)</div>
+                                            <div class="mr-3"><strong>Street No:</strong> @Html.DisplayFor(modelItem => Model.RpAddress.StreetNo)</div>
+                                            <div class="mr-3"><strong>Ward No:</strong> @Html.DisplayFor(modelItem => Model.RpAddress.WardNo)</div>
+                                            <div class="mr-3"><strong>Thana:</strong> @Html.DisplayFor(modelItem => Model.RpAddress.Thana)</div>
+                                            <div class="mr-3"><strong>District:</strong> @Html.DisplayFor(modelItem => Model.RpAddress.District)</div>
+                                            <div><strong>Division:</strong> @Html.DisplayFor(modelItem => Model.RpAddress.Division)</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2">No address available</td>
+                                </tr>
+                            }
+
+                            <!-- Order Information -->
+                            <tr class="justify-content-center text-center text-white" style="background:#b3b3b3;">
+                                <th colspan="2">Order Information</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Order ID:</strong> @Model.OrderId</td>
+                                <td><strong>Order Date:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Order Condition:</strong> @Model.OrderCondition</td>
+                                <td><strong>Payment Methods:</strong> @Model.PaymentMethods</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Payable Money:</strong> @Model.PayableMoney Tk</td>
+                                <td><strong>Delivery Charge:</strong> @Model.DelivaryCharge Tk</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>Order Accept Time:</strong> @Model.OrderAccept.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+
+                            <!-- Products Information -->
+                            <tr class="justify-content-center text-center text-white" style="background:#37cd4a;">
+                                <th colspan="2">Products</th>
+                            </tr>
+                            @foreach (var product in Model.Products)
+                            {
+                                <tr>
+                                    <td>@product.ProductName - Quantity: @product.Quantity</td>
+                                    <td class="text-right">Price: @product.Price Tk</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td class="text-right" colspan="2"><strong>Total Price:</strong> @Model.TotalPrice Tk</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Button -->
+    <div class="mt-4 text-center">
+        <button class="btn btn-primary" id="print-button">Generate Invoice</button>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 8px;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+    }
+
+    .table th,
+    .table td {
+        vertical-align: middle;
+    }
+
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+
+    .mr-3 {
+        margin-right: 5px;
+    }
+
+    .row.justify-content-center {
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Hide all elements except the card during print */
+ 
+</style>
+
+<script>
+    document.getElementById("print-button").addEventListener("click", function () {
+        window.print();
+    });
+</script>

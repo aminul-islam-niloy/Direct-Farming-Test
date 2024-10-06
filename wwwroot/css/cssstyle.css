@@ -7974,10 +7974,13 @@ textarea:-ms-input-placeholder {
 
 .footer_payment {
   text-align: right;
+
+  
 }
 @media only screen and (max-width: 767px) {
   .footer_payment {
     text-align: center !important;
+
   }
 }
 

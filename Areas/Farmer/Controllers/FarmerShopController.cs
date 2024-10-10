@@ -415,7 +415,7 @@ namespace OrganicOption.Areas.Farmer.Controllers
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
 
-                TempData["save"] = "Product has been added";
+               // TempData["save"] = "Product has been added";
                 return RedirectToAction(nameof(Index));
             }
 

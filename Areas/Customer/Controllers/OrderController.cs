@@ -271,6 +271,80 @@ namespace OnlineShop.Areas.Customer.Controllers
         }
 
 
+        //stripe payment method
+
+        [HttpPost]
+        public IActionResult CreatePayment(int orderId)
+        {
+            // Retrieve the order from the database
+            var order = _db.Orders.Include(o => o.OrderDetails)
+                                  .FirstOrDefault(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                return RedirectToAction("ErrorPage", "Home", new { area = "Customer" });
+            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var totalAmount = order.OrderDetails.Sum(od => od.Price * od.Quantity);
+
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+            // Create the Stripe session
+            var sessionService = new SessionService();
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    Currency = "usd",
+                    UnitAmount = (long)(totalAmount),
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = "Order Payment"
+                    }
+                },
+                Quantity = 1
+            }
+        },
+                Mode = "payment",
+                SuccessUrl = "https://localhost:44343/User/Deshboard/Index",
+                CancelUrl = "https://localhost:44343/Customer/Order/PaymentPage"
+            };
+
+
+            var session = sessionService.Create(options);
+
+            // Store the session ID in the order details
+            order.OrderDetails.ForEach(od =>
+            {
+                od.StripeSessionId = session.Id;
+                od.PaymentMethods = PaymentMethods.Card;
+            });
+
+
+            _db.SaveChanges();
+
+
+            return Redirect(session.Url);
+        }
+
+
+        //  PaymentPage
+
+        public IActionResult PaymentPage(int orderId)
+        {
+            // Pass orderId to the view
+            ViewBag.OrderId = orderId;
+            return View();
+        }
+
+
+
+
         [Authorize(Roles = "Admin")]
 
         public IActionResult AllOrders()
@@ -600,76 +674,7 @@ namespace OnlineShop.Areas.Customer.Controllers
         }
 
 
-        //stripe payment method
-
-        [HttpPost]
-        public IActionResult CreatePayment(int orderId)
-        {
-            // Retrieve the order from the database
-            var order = _db.Orders.Include(o => o.OrderDetails)
-                                  .FirstOrDefault(o => o.Id == orderId);
-
-            if (order == null)
-            {
-                   return RedirectToAction("ErrorPage", "Home", new { area = "Customer" });
-            }
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var totalAmount = order.OrderDetails.Sum(od => od.Price * od.Quantity);
-
-            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
-            // Create the Stripe session
-            var sessionService = new SessionService();
-            var options = new SessionCreateOptions
-            {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>
-        {
-            new SessionLineItemOptions
-            {
-                PriceData = new SessionLineItemPriceDataOptions
-                {
-                    Currency = "usd",
-                    UnitAmount = (long)(totalAmount),
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
-                    {
-                        Name = "Order Payment"
-                    }
-                },
-                Quantity = 1
-            }
-        },
-                Mode = "payment",
-                SuccessUrl = "https://localhost:44343/User/Deshboard/Index",
-                CancelUrl = "https://localhost:44343/Customer/Order/PaymentPage"
-            };
-
-
-            var session = sessionService.Create(options);
-
-            // Store the session ID in the order details
-            order.OrderDetails.ForEach(od =>
-            {
-                od.StripeSessionId = session.Id;
-                od.PaymentMethods = PaymentMethods.Card;
-            });
-
-
-            _db.SaveChanges();
-
-
-            return Redirect(session.Url);
-        }
-
-
-        //  PaymentPage
-
-        public IActionResult PaymentPage(int orderId)
-        {
-            // Pass orderId to the view
-            ViewBag.OrderId = orderId;
-            return View();
-        }
+        
 
 
         [Authorize(Roles = "Admin")]
